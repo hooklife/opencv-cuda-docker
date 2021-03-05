@@ -9,7 +9,6 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
     vim \
     wget \
     pkg-config \
-    python-pip \
     python3-pip \
     python-numpy \
     libjpeg-dev \
@@ -28,7 +27,6 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
     libc6-dev-i386 \
     libavresample-dev \
     libgphoto2-dev \
-    libx32gcc-4.8-dev \
     libgstreamer-plugins-base1.0-dev \
     libdc1394-22-dev
 

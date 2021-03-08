@@ -1,8 +1,11 @@
-FROM nvidia/cuda:11.2.1-cudnn8-devel-ubuntu20.04
+FROM nvidia/cuda:11.1-cudnn8-devel-ubuntu20.04
 
-ARG OPENCV_VERSION=4.5.0
+ARG OPENCV_VERSION=4.5.1
 
-RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
+RUN rm /etc/apt/sources.list.d/cuda.list && rm /etc/apt/sources.list.d/nvidia-ml.list
+
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update -y --fix-missing &&  apt-get install -y --no-install-recommends \
     git \
     build-essential \
     cmake \
@@ -34,8 +37,8 @@ RUN pip3 install --upgrade pip
 
 
 WORKDIR /opt
-RUN wget https://github.com/opencv/opencv_contrib/archive/$OPENCV_VERSION.tar.gz --no-check-certificate && tar -xf $OPENCV_VERSION.tar.gz && rm $OPENCV_VERSION.tar.gz && \
-    wget https://github.com/opencv/opencv/archive/$OPENCV_VERSION.tar.gz --no-check-certificate && tar -xf $OPENCV_VERSION.tar.gz && rm $OPENCV_VERSION.tar.gz
+RUN wget https://hub.fastgit.org/opencv/opencv_contrib/archive/$OPENCV_VERSION.tar.gz --no-check-certificate && tar -xf $OPENCV_VERSION.tar.gz && rm $OPENCV_VERSION.tar.gz && \
+    wget https://hub.fastgit.org/opencv/opencv/archive/$OPENCV_VERSION.tar.gz --no-check-certificate && tar -xf $OPENCV_VERSION.tar.gz && rm $OPENCV_VERSION.tar.gz
 
 
 RUN mkdir build && cd build && \
@@ -53,6 +56,8 @@ RUN mkdir build && cd build && \
     -D WITH_CUBLAS=1 \
     -D OPENCV_EXTRA_MODULES_PATH=/opt/opencv_contrib-$OPENCV_VERSION/modules \
     -D HAVE_opencv_python3=ON \
+    -D CUDA_ARCH_BIN=5.3,6.0,6.1,7.0,7.5 \
+    -D CUDA_ARCH_PTX=7.5 \
     -D BUILD_EXAMPLES=OFF /opt/opencv-$OPENCV_VERSION && \
     make -j7 && \
     make install && \
